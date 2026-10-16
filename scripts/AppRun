@@ -1,0 +1,73 @@
+#!/bin/sh
+set -eu
+APPDIR=${APPDIR:-$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)}
+export APPDIR
+export GLYPH_LAUNCHER="${APPIMAGE:-$APPDIR/AppRun}"
+export PYTHONHOME="$APPDIR/usr"
+export PYTHONNOUSERSITE=1
+export PYTHONDONTWRITEBYTECODE=1
+unset PYTHONPATH LD_LIBRARY_PATH QT_PLUGIN_PATH QML2_IMPORT_PATH
+export PYTHONPATH="$APPDIR/usr/lib/python3.12/site-packages"
+export PATH="$APPDIR/usr/bin:$PATH"
+qt="$APPDIR/usr/lib/python3.12/site-packages/PyQt6/Qt6"
+export QT_PLUGIN_PATH="$qt/plugins"
+export QTWEBENGINEPROCESS_PATH="$qt/libexec/QtWebEngineProcess"
+export QTWEBENGINE_RESOURCES_PATH="$qt/resources"
+export QTWEBENGINE_LOCALES_PATH="$qt/translations/qtwebengine_locales"
+export TESSDATA_PREFIX="$APPDIR/usr/share/tessdata"
+export SSL_CERT_FILE="$APPDIR/usr/share/glyph/ca-certificates.crt"
+export SSL_CERT_DIR=/etc/ssl/certs
+export QT_QPA_PLATFORMTHEME=generic
+# Prefer Intel graphics on hybrid laptops; affect Glyph, never the host session.
+export GLYPH_GPU_SELECTED=system
+if [ "${GLYPH_GPU:-integrated}" != system ]; then
+  intel_present=false
+  intel_pci=
+  for vendor in /sys/class/drm/card[0-9]*/device/vendor; do
+    if [ -r "$vendor" ]; then
+      read -r gpu_vendor < "$vendor"
+      if [ "$gpu_vendor" = 0x8086 ]; then
+        intel_present=true
+        gpu_path=$(readlink -f "${vendor%/vendor}")
+        intel_pci=${gpu_path##*/}
+      fi
+    fi
+  done
+  if [ "$intel_present" = true ]; then
+    intel_drivers=
+    for directory in /usr/share/vulkan/icd.d /etc/vulkan/icd.d /usr/local/share/vulkan/icd.d; do
+      for driver in "$directory"/intel*_icd*.json; do
+        [ -f "$driver" ] || continue
+        case "$driver" in *i686*|*i386*) continue;; esac
+        intel_drivers="${intel_drivers:+$intel_drivers:}$driver"
+      done
+    done
+    if [ -n "$intel_drivers" ]; then
+      export VK_DRIVER_FILES="$intel_drivers"
+      export VK_ICD_FILENAMES="$intel_drivers"
+      unset GBM_BACKEND __NV_PRIME_RENDER_OFFLOAD __VK_LAYER_NV_optimus
+      export __GLX_VENDOR_LIBRARY_NAME=mesa
+      export DRI_PRIME="pci-$(printf '%s' "$intel_pci" | tr ':.' '__')"
+      if [ -f /usr/share/glvnd/egl_vendor.d/50_mesa.json ]; then
+        export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
+      fi
+      export QSG_RHI_BACKEND=opengl
+      export GLYPH_GPU_SELECTED=intel-integrated
+    fi
+  fi
+fi
+# Never disable Chromium's security sandbox, even in the optional software mode.
+case "${GLYPH_RENDERER:-auto}" in
+  software)
+    export QT_QUICK_BACKEND=software
+    export QTWEBENGINE_CHROMIUM_FLAGS="${QTWEBENGINE_CHROMIUM_FLAGS:-} --disable-gpu" ;;
+  vulkan) export QSG_RHI_BACKEND=vulkan ;;
+  auto) : ;;
+esac
+case "${1:-}" in
+  --python) shift; exec "$APPDIR/usr/bin/python3" "$@" ;;
+  --diagnose) shift; exec "$APPDIR/usr/bin/python3" "$APPDIR/app/bundle_check.py" "$@" ;;
+  --install|--uninstall)
+    exec "$APPDIR/usr/bin/python3" "$APPDIR/app/appimage_integration.py" "$@" ;;
+esac
+exec "$APPDIR/usr/bin/python3" "$APPDIR/app/main_qt.py" "$@"

@@ -1,0 +1,34 @@
+{
+  "wheels": [
+    {
+      "file": "pyqt6-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/c3/a0/bd1399740dfa80c0a94d20b02d89962a31458233dcf70eaa09bfbccf3d0f/pyqt6-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+      "sha256": "8555277989fa7d114cb3c3443fd261d566909f7268ceedd41d93a5f02d37ec05"
+    },
+    {
+      "file": "pyqt6_qt6-6.11.2-py3-none-manylinux_2_34_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/69/ef/e34054e814c874f5230326ffc791f602a13b2f5590ca9599ba45b5fc4bc0/pyqt6_qt6-6.11.2-py3-none-manylinux_2_34_x86_64.whl",
+      "sha256": "da7d747ad917f044d841ff834f17d2c50a0cc5d0e3b16479d8662544207d0567"
+    },
+    {
+      "file": "pyqt6_sip-13.13.0-cp312-cp312-manylinux1_x86_64.manylinux_2_5_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/e3/d2/f2c77662be1f4ca6e35a8897d573b51a9e662e6b86a0d42c50afa9d46acf/pyqt6_sip-13.13.0-cp312-cp312-manylinux1_x86_64.manylinux_2_5_x86_64.whl",
+      "sha256": "7429e63fc8279a0508ed5cbc1b33da76c15a61a06a745825e807a3604fbde4f2"
+    },
+    {
+      "file": "pyqt6_webengine-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/02/63/99f0032137dd76d7c401d467887bcee112df4fc9f496cf92b11de6b93551/pyqt6_webengine-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+      "sha256": "a9c07d18ab6aa4be95dea5bdbced2690cf0659637634e960bd5cf90c9aa5bc1b"
+    },
+    {
+      "file": "pyqt6_webengine_qt6-6.11.2-py3-none-manylinux_2_34_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/95/8a/898587477eec44d62aede99040a14aa6197a624bc055b82da0be03f23c88/pyqt6_webengine_qt6-6.11.2-py3-none-manylinux_2_34_x86_64.whl",
+      "sha256": "764891ae20e81828ed8ba0dc153daffca10f8060c9a9b0303a7d407e3e72ce9b"
+    }
+  ],
+  "runtime": {
+    "url": "https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-x86_64",
+    "sha256": "156f4bdbde9c52d01814600013e0a273f0118dc2de98975f3c8c63427ec79074",
+    "commit": "8f39b89e2ac31e1640b3d3f7e9a5108e6ce805fa"
+  }
+}

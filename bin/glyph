@@ -1,0 +1,3 @@
+#!/bin/sh
+GLYPH_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+exec "${GLYPH_PYTHON:-python3}" "$GLYPH_ROOT/app/main_qt.py" "$@"
